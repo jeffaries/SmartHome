@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>My IoT</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="http://www.urbanui.com/cloudui/dark/vendors/iconfonts/simple-line-icon/css/simple-line-icons.css">
+  <link rel="stylesheet" href="http://www.urbanui.com/cloudui/dark/vendors/iconfonts/flag-icon-css/css/flag-icon.min.css">
+  <link rel="stylesheet" href="http://www.urbanui.com/cloudui/dark/vendors/css/vendor.bundle.base.css">
+  <link rel="stylesheet" href="http://www.urbanui.com/cloudui/dark/vendors/css/vendor.bundle.addons.css">
+
+	<style>
+	@-webkit-keyframes rotating /* Safari and Chrome */ {
+	  from {
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	  }
+	  to {
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	  }
+	}
+	@keyframes rotating {
+	  from {
+		-ms-transform: rotate(0deg);
+		-moz-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	  }
+	  to {
+		-ms-transform: rotate(360deg);
+		-moz-transform: rotate(360deg);
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	  }
+	}
+	.rotating {
+	  -webkit-animation: rotating 2s linear infinite;
+	  -moz-animation: rotating 2s linear infinite;
+	  -ms-animation: rotating 2s linear infinite;
+	  -o-animation: rotating 2s linear infinite;
+	  animation: rotating 2s linear infinite;
+	}
+
+	.rotating path{
+		fill:#11CD6E !important
+	}
+
+	.boardcard{
+		height:200px;
+		border:1px solid silver; 
+		border-radius:5px; 
+		margin-bottom:30px; 
+		padding:10px
+	}
+
+
+	</style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+        <div class="container">
+            <div class="navbar-brand">My IoT</div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#home" data-toggle="tab">
+                            Home
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#configuration" data-toggle="tab">Configuration</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="tabpanel"  style="margin-top:20px">
+        <div class="tab-content">
+            <div class="tab-pane container active" id="home" role="tabpanel">
+			<div id="alertReadMeasures" style="display:none" class=" fade show alert alert-danger" role="alert">
+			  Unable to read current values from the sensor.
+			</div>
+                <div class="row">
+					<div class="text-center col-md-6 col-lg-4">
+						<div class="boardcard">
+							<h5 class="card-title">Humidity</h5>
+							<p class="card-text">
+							<h1 class="display-2">
+								<span id="humidity">...</span>%
+							</h1>
+							</p>
+						</div>
+					</div>
+					<div class="text-center col-md-6 col-lg-4">
+						<div class="boardcard">
+							<h5 class="card-title">Temperature</h5>
+							<p class="card-text">
+							<h1 class="display-2">
+								<span id="temperature">...</span>°C
+							</h1>
+							</p>
+						</div>
+					</div>
+					<div class="text-center col-md-6 col-lg-4">
+						<div class="boardcard">
+							<h5 class="card-title">Heat Index</h5>
+							<p class="card-text">
+							<h1 class="display-1">
+								<span id="heat_index">...</span>°C
+							</h1>
+							</p>
+						</div>
+					</div>
+
+					<div class="text-center col-md-6 col-lg-4">
+						<div class="boardcard">
+							<h5 class="card-title">Flow ventilation</h5>
+							<div style="padding:10px; min-height:135px">						
+								<div id="fan" style="width:100px; height:100px;position:absolute;left:50%;margin-left:-50px">
+									<svg version="1.1" style="max-width:100px; max-height:100px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve">
+									<metadata> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata>
+									<g><g transform="translate(0.000000,511.000000) scale(0.100000,-0.100000)"><path  style="fill:#cccccc" d="M3062.4,4983.6c-420.9-70.2-813.8-284.1-1315.4-705c-459.5-389.3-866.4-919-1052.3-1375c-105.2-256.1-98.2-543.7,14-799.8c196.4-434.9,557.7-568.2,1816.9-680.4c740.1-63.1,1073.3-157.8,1431.1-410.4c112.3-80.7,115.8-101.7,35.1-199.9c-63.1-73.6-73.6-73.6-498.1-38.6c-771.7,66.6-1543.3-56.1-2076.5-336.8c-463-245.5-961.1-747.1-1164.5-1182c-182.4-378.8-203.5-957.6-52.6-1389C459.7-2894.4,1410.3-3873,2196-4192.3c235-94.7,438.4-105.2,677-35.1c536.7,161.4,691,519.2,810.3,1862.6c56.1,634.9,105.2,866.4,263.1,1175c164.9,319.2,175.4,326.2,305.2,217.5l108.7-94.7l-28.1-382.3c-91.2-1255.7,249-2216.8,1006.7-2848.2c463-382.3,901.4-533.1,1413.6-487.5c361.3,35.1,638.4,126.3,943.6,315.7c708.5,434.9,1350.4,1147,1606.5,1781.9c115.7,284.1,98.2,571.7-49.1,862.9c-185.9,364.8-515.6,494.6-1501.3,585.8c-859.4,77.2-1108.4,129.8-1445.1,294.6l-291.1,143.8l91.2,136.8c70.1,105.2,112.3,136.8,168.4,126.3c214-45.6,694.5-52.6,1059.3-21c715.6,66.6,1248.7,270.1,1708.2,648.9c263.1,217.5,578.8,606.8,701.5,869.9c252.5,526.1,192.9,1241.7-143.8,1806.4c-431.4,715.6-1164.5,1382-1806.4,1645.1c-284.1,115.7-571.7,98.2-862.9-49.1c-364.8-185.9-494.6-515.6-585.8-1501.3c-28-326.2-73.6-719.1-101.7-873.4c-49.1-270.1-224.5-701.5-354.3-855.8l-66.6-77.2l-98.2,77.2l-94.7,80.7l31.6,403.4c98.2,1322.4-252.5,2297.5-1059.3,2939.4C4114.7,4945,3630.6,5078.4,3062.4,4983.6z"/></g></g>
+									</svg>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+            <div class="tab-pane container fade" id="configuration" role="tabpanel">
+                <div class="tab-content">
+                    <form class="form-horizontal" id="myForm">
+                        <h1 class="display-4">Configuration</h1>
+                        <div />
+                        <h5>Measure</h5>
+                        <div class="form-group row">
+                            <label for="humidity_threshold" class="col-md-3 col-form-label">Humidity Threshold:</label>
+                            <div class="col-md-5  input-group">
+                                <input type="number" step="0.5" class="form-control" name="humidity_threshold" id="humidity_threshold" placeholder="Required (0 - 100)" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <h5>MQTT</h5>
+                        <div class="form-group row ">
+                            <label for="module_name" class="col-md-3 col-form-label">Module Name:</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="module_name" id="module_name" placeholder="Required" required>
+                            </div>
+                        </div>
+                        <div class="form-group row ">
+                            <label for="mqtt_server" class="col-md-3 col-form-label">MQTT Server:</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="mqtt_server" id="mqtt_server" placeholder="Required" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="mqtt_port" class="col-md-3 col-form-label">MQTT Port:</label>
+							<div class="col-md-5">
+								<input type="number" class="form-control" name="mqtt_port" id="mqtt_port" placeholder="Required" required>
+                            </div>
+                        </div>						
+                        <div class="form-group row">
+                            <label for="mqtt_prefix" class="col-md-3 col-form-label">MQTT prefix:</label>
+                            <div class="col-md-5  input-group">
+                                <input type="text" class="form-control" name="mqtt_prefix" id="mqtt_prefix" placeholder="Required" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">/<span id="suffix"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="mqtt_publish_interval" class="col-md-3 col-form-label">Publishing interval:</label>
+                            <div class="col-md-5  input-group">
+                                <input type="number" class="form-control" name="mqtt_publish_interval" id="mqtt_publish_interval" placeholder="Required" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">seconds</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>&nbsp;</div>
+                        <button type="submit" id="submit" class="btn btn-primary right">Submit</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <script language="javascript">
+        $(function () {
+
+            $("#module_name").change(function () {
+                $("#suffix").text($("#module_name").val());
+            });
+
+
+            $.ajax({
+                type: "GET",
+                url: "/config",
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $("#" + key).val(value);
+                    });
+					$("#suffix").text($("#module_name").val());
+                },
+				error: function (request, status, error) {
+					alert(request.responseText);
+				}
+
+            });
+
+
+            var tid = setInterval(loadData, 1000);
+			loadData();
+
+
+			//twitter bootstrap script
+			$(document).on("submit", this.id, function(e) {
+				e.preventDefault();
+				var frm = e.target.id;
+				var frmData = $("#" + frm).serialize();
+				$.ajax({
+					type: "POST",
+					url: "/save",
+					data: frmData,
+					success: function (msg) {
+						alert("Successfully saved");
+					},
+					error: function (request, status, error) {
+						alert(request.responseText);
+					}
+				});
+			});
+        });
+
+        function loadData() {
+            $.ajax({
+                type: "GET",
+                url: "/data",
+                success: function (data) {
+					if(data.error)
+					{
+						$("#alertReadMeasures").show();
+					}
+					else
+					{
+						$("#humidity").text(Math.round(data.humidity*10)/10);
+						$("#temperature").text(Math.round(data.temperature*10)/10);
+						$("#heat_index").text(Math.round(data.heatindex*10)/10);
+						if(data.relaystate)
+						{
+							$("#fan").addClass("rotating");
+						}
+						else
+						{
+							$("#fan").removeClass("rotating");
+						}
+						$("#alertReadMeasures").hide();
+					}
+                },
+				error: function (request, status, error) {
+					//alert(request.responseText);
+					$("#alertReadMeasures").show();
+				}
+
+            });
+        }
+
+    </script>
+</body>
+
+</html>
