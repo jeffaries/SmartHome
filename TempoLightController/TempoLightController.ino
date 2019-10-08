@@ -288,7 +288,6 @@ void read()
         if(!relayOn)
         {
             digitalWrite(RELAYPIN, LOW);
-            publish();
             publishRelayState(true);
             relayOn = true;
             startedOn = millis();
@@ -299,57 +298,11 @@ void read()
         if(relayOn )
         {
             digitalWrite(RELAYPIN, HIGH);
-            publish();
             publishRelayState(false);
             relayOn = false;
         }  
      }
   }
-}
-
-void publish(){
-  if(errorReadingMeasures)
-  {
-    Serial.print("Error while reading values");
-  }
-  else
-  {
-
-    if(!similar(latest_temperature, temperature))
-    {
-      publishTemperature(temperature);
-      latest_temperature = temperature;
-      Serial.print("Temperature: ");
-      Serial.print(temperature);
-      Serial.println("°C");
-    }
-    if(!similar(latest_humidity, humidity))
-    {
-      publishHumidity(humidity);
-      latest_humidity = humidity;
-      Serial.print("Humidity: ");
-      Serial.print(humidity);
-      Serial.println("%");
-    }
-    if(!similar(latest_heatIndex, heatIndex))
-    {
-      publishHeatIndex(heatIndex);
-      latest_heatIndex = heatIndex;
-      Serial.print("Heat Index: ");
-      Serial.print(heatIndex);
-      Serial.println("°C");
-    }
-  
-    //publishMeasure();
-  }
-
-
-}
-
-
-bool similar(float v1, float v2)
-{
-    return fabsf(v2-v1) < 0.01;
 }
 
 
