@@ -47,9 +47,6 @@ Board : esp8286 by ESP8286 Community. Version 2.5.0
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
 
-//Sensors
-#include "DHTesp.h"
-
 #ifdef ESP32
 #pragma message(THIS EXAMPLE IS FOR ESP8266 ONLY!)
 #error Select ESP8266 board.
@@ -86,7 +83,7 @@ Board : esp8286 by ESP8286 Community. Version 2.5.0
 
 // SHT30 Sensor wiring
 //TODO: Inverser DHTPIN et RELAYPIN sur PCB -> Relai sur GPIO2 et DHT sur GPIO0
-#define DHTPIN              D3
+#define INPUTPIN              D3
 #define RELAYPIN            D4 
 #define DHTTYPE             DHT22 
 #define HUMIDITY_THRESHOLD  70 
@@ -113,8 +110,6 @@ float minimumRunningTime = 1000 * 60 * 3; // 3 minutes
 
 //Create the webserver
 ESP8266WebServer server(80);
-
-DHTesp dht;
 
 // Create a mqtt MQTTClient class
 MQTTClient mqtt;
@@ -222,8 +217,6 @@ void setup() {
   WiFi.hostname(module_name);
 
 
-
-  dht.setup(DHTPIN, DHTesp::DHT22);
   
   
   Serial.print("IP number assigned by DHCP is ");
@@ -234,7 +227,9 @@ void setup() {
   mqtt_connect(mqtt_server,mqtt_port,module_name);
 
 
-  
+  //CONNECT pin to buttons, and buttons to GND
+  pinMode(INPUTPIN, INPUT_PULLUP);
+      
   // Start with opened relay
     pinMode(RELAYPIN, OUTPUT);
     digitalWrite(RELAYPIN, HIGH);
@@ -275,45 +270,20 @@ void loop() {
   else
   {
     Serial.println("Not connected to wifi");
-    delay(3000);
-    ESP.restart();
+    //delay(3000);
+    //ESP.restart();
   }
 
-  unsigned long ms = millis();
-  // SHT03 Sensor read
-  if(lastread==0 | ms < lastread | (ms - lastread) > READ_INTERVAL) // time to update
-  {
-    lastread = ms;
-    read();
-    if(lastpublish==0 | ms < lastpublish |  (ms - lastpublish) > (mqtt_publish_interval * 1000))
-    {
-      lastpublish = ms;
-      publish();
-    }
-  }
+   read();
+  
 
 }
 
 void read()
 {
   
-  humidity = dht.getHumidity();
-  temperature = dht.getTemperature();
-  heatIndex = dht.computeHeatIndex(temperature, humidity, false);
-  
-  if(isnan(humidity)) {
-    humidity = 66.0;
-    temperature = 6.6;
-    heatIndex = 6.66;
-  }
     
-  errorReadingMeasures = (isnan(humidity) || isnan(temperature));
-
-
-  if(!errorReadingMeasures)
-  {
-    
-    if(humidity > humidityThreshold)
+    if(digitalRead(INPUTPIN))
     {
         if(!relayOn)
         {
@@ -326,7 +296,7 @@ void read()
     }
     else
     {
-        if(relayOn && (millis() - startedOn) > minimumRunningTime )
+        if(relayOn )
         {
             digitalWrite(RELAYPIN, HIGH);
             publish();
