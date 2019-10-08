@@ -14,51 +14,6 @@ void mqtt_connect(const char* server, const char* port, const char* name) {
 
 }
 
-
-void publishHumidity(float humidity) {
-    if (mqtt.connected()) {
-      char topic[50],payload[15];
-      sprintf(topic,"%s/%s/%s",mqtt_prefix,module_name,"humidity");
-      sprintf(payload,"%s",f2s(humidity,2));
-      mqtt.publish(topic,payload, false, 2);
-    }
-}
-
-void publishTemperature(float temperature) {
-    if (mqtt.connected()) {
-      char topic[50],payload[15];
-      sprintf(topic,"%s/%s/%s",mqtt_prefix,module_name,"temperature");
-      sprintf(payload,"%s",f2s(temperature,2));
-      mqtt.publish(topic,payload, false, 2);
-    }
-}
-
-void publishHeatIndex(float heatIndex) {
-    if (mqtt.connected()) {
-      char topic[50],payload[15];
-      sprintf(topic,"%s/%s/%s",mqtt_prefix,module_name,"heatindex");
-      sprintf(payload,"%s",f2s(heatIndex,2));
-      mqtt.publish(topic,payload, false, 2);
-    }
-}
-
-void publishMeasure(){
-    if (mqtt.connected()) {
-      char topic[50],payload[15];  
-      sprintf(topic,"%s/%s/%s",mqtt_prefix,module_name,"measure");
-      char msg[256];
-      DynamicJsonBuffer jsonBuffer;
-      JsonObject& json = jsonBuffer.createObject();
-  
-      json["temperature"] = temperature;
-      json["humidity"] = humidity;
-      json["heatindex"] = heatIndex;
-      json.printTo(msg);
-      json.printTo(Serial);
-      mqtt.publish(topic,msg, false, 2);
-    }
-}
-
 void publishRelayState(bool state) {
     if (mqtt.connected()) {
       char topic[50],payload[15];
