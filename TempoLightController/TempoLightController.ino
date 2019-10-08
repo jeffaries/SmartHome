@@ -98,6 +98,7 @@ char mqtt_prefix[40] = MQTT_PREFIX;
 char mqtt_server[40] = MQTT_SERVER;
 char mqtt_port[6] = MQTT_SERVERPORT;
 int mqtt_publish_interval = MQTT_PUBLISH_INTERVAL;
+unsigned long lightOnTimeout = 60000; //60 seconds
 
 // Vars for storing humidity and temperature
 float humidity, temperature, heatIndex, humidityThreshold = HUMIDITY_THRESHOLD;
@@ -128,9 +129,6 @@ bool relayOn = false;
 
 //flag for saving data
 bool shouldSaveConfig = false;
-      
-
-
 
 // Local
 #include "f2s.h"
@@ -146,7 +144,6 @@ void setup() {
 
   // Initialize serial port
   Serial.begin(SERIAL_SPEED);
-
   Serial.println("SmartHome");
   Serial.println("--------------------");
   Serial.println("");
@@ -215,8 +212,6 @@ void setup() {
   Serial.print("Hello, my name is "); 
   Serial.println(module_name);
   WiFi.hostname(module_name);
-
-
   
   
   Serial.print("IP number assigned by DHCP is ");
@@ -225,7 +220,6 @@ void setup() {
   
   // Connect to MQTT server
   mqtt_connect(mqtt_server,mqtt_port,module_name);
-
 
   //CONNECT pin to buttons, and buttons to GND
   pinMode(INPUTPIN, INPUT_PULLUP);
@@ -236,75 +230,65 @@ void setup() {
     publishRelayState(false);
     relayOn = false;
 
-
-
-
   // OTA
   ota_init(module_name);
 
   // Init and start webserver
   setup_webServer();
-
-  
   publishIPAddress();
-
-
 }
 
 void loop() {
-  // OTA
-  ArduinoOTA.handle();
-  server.handleClient();
-    
-  if (WiFi.status() == WL_CONNECTED) {
-    // MQTT
-    if (!mqtt.connected()) {
-      mqtt_connect(mqtt_server,mqtt_port,module_name);
-      read();
-    }
-    else
-    {
-      mqtt.loop();
-    }
-  }
-  else
-  {
-    Serial.println("Not connected to wifi");
-    //delay(3000);
-    //ESP.restart();
-  }
+      // OTA
+      ArduinoOTA.handle();
+      server.handleClient();
 
-   read();
+      if (WiFi.status() == WL_CONNECTED) {
+      // MQTT
+            if (!mqtt.connected()) {
+                  mqtt_connect(mqtt_server,mqtt_port,module_name);
+            }
+            else
+            {
+                  mqtt.loop();
+            }
+      }
+      else
+      {
+            Serial.println("Not connected to wifi");
+            //delay(3000);
+            //ESP.restart();
+      }
+      
+      
+      if(digitalRead(INPUTPIN))
+      {
+         switchOn();
+      }
   
+      if (relayOn && millis() - startedOn >= lightOnTimeout) {
+         switchOff();
+      }
 
 }
 
-void read()
-{
-  
-    
-    if(digitalRead(INPUTPIN))
-    {
-        if(!relayOn)
-        {
-            digitalWrite(RELAYPIN, LOW);
+
+
+
+void switchOn(){
+      digitalWrite(RELAYPIN, LOW);
+      if(!relayOn){
             publishRelayState(true);
             relayOn = true;
-            startedOn = millis();
-        }    
-    }
-    else
-    {
-        if(relayOn )
-        {
-            digitalWrite(RELAYPIN, HIGH);
-            publishRelayState(false);
-            relayOn = false;
-        }  
-     }
-  }
+      }
+      startedOn = millis();
 }
 
+void switchOff(){
+      digitalWrite(RELAYPIN, HIGH);
+      publishRelayState(false);
+      relayOn = false;
+}
 
 //callback notifying us of the need to save config
 void saveConfigCallback () {
