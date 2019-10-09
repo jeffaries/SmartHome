@@ -18,43 +18,7 @@
   <link rel="stylesheet" href="http://www.urbanui.com/cloudui/dark/vendors/css/vendor.bundle.addons.css">
 
 	<style>
-	@-webkit-keyframes rotating /* Safari and Chrome */ {
-	  from {
-		-webkit-transform: rotate(0deg);
-		-o-transform: rotate(0deg);
-		transform: rotate(0deg);
-	  }
-	  to {
-		-webkit-transform: rotate(360deg);
-		-o-transform: rotate(360deg);
-		transform: rotate(360deg);
-	  }
-	}
-	@keyframes rotating {
-	  from {
-		-ms-transform: rotate(0deg);
-		-moz-transform: rotate(0deg);
-		-webkit-transform: rotate(0deg);
-		-o-transform: rotate(0deg);
-		transform: rotate(0deg);
-	  }
-	  to {
-		-ms-transform: rotate(360deg);
-		-moz-transform: rotate(360deg);
-		-webkit-transform: rotate(360deg);
-		-o-transform: rotate(360deg);
-		transform: rotate(360deg);
-	  }
-	}
-	.rotating {
-	  -webkit-animation: rotating 2s linear infinite;
-	  -moz-animation: rotating 2s linear infinite;
-	  -ms-animation: rotating 2s linear infinite;
-	  -o-animation: rotating 2s linear infinite;
-	  animation: rotating 2s linear infinite;
-	}
-
-	.rotating path{
+	.switchedOn path{
 		fill:#11CD6E !important
 	}
 
@@ -102,36 +66,6 @@
 			  Unable to read current values from the sensor.
 			</div>
                 <div class="row">
-					<div class="text-center col-md-6 col-lg-4">
-						<div class="boardcard">
-							<h5 class="card-title">Humidity</h5>
-							<p class="card-text">
-							<h1 class="display-2">
-								<span id="humidity">...</span>%
-							</h1>
-							</p>
-						</div>
-					</div>
-					<div class="text-center col-md-6 col-lg-4">
-						<div class="boardcard">
-							<h5 class="card-title">Temperature</h5>
-							<p class="card-text">
-							<h1 class="display-2">
-								<span id="temperature">...</span>°C
-							</h1>
-							</p>
-						</div>
-					</div>
-					<div class="text-center col-md-6 col-lg-4">
-						<div class="boardcard">
-							<h5 class="card-title">Heat Index</h5>
-							<p class="card-text">
-							<h1 class="display-1">
-								<span id="heat_index">...</span>°C
-							</h1>
-							</p>
-						</div>
-					</div>
 
 					<div class="text-center col-md-6 col-lg-4">
 						<div class="boardcard">
@@ -274,16 +208,13 @@
 					}
 					else
 					{
-						$("#humidity").text(Math.round(data.humidity*10)/10);
-						$("#temperature").text(Math.round(data.temperature*10)/10);
-						$("#heat_index").text(Math.round(data.heatindex*10)/10);
 						if(data.relaystate)
 						{
-							$("#fan").addClass("rotating");
+							$("#bulb").addClass("switchedOn");
 						}
 						else
 						{
-							$("#fan").removeClass("rotating");
+							$("#bulb").removeClass("switchedOn");
 						}
 						$("#alertReadMeasures").hide();
 					}
