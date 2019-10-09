@@ -83,11 +83,9 @@ Board : esp8286 by ESP8286 Community. Version 2.5.0
 
 // SHT30 Sensor wiring
 //TODO: Inverser DHTPIN et RELAYPIN sur PCB -> Relai sur GPIO2 et DHT sur GPIO0
-#define INPUTPIN              D3
+#define INPUTPIN            D3
 #define RELAYPIN            D4 
-#define DHTTYPE             DHT22 
-#define HUMIDITY_THRESHOLD  70 
-#define READ_INTERVAL       1000 // ms
+#define LEDPIN              D5 
 
 /*********************/
 /*     Global vars   */
@@ -99,15 +97,9 @@ char mqtt_server[40] = MQTT_SERVER;
 char mqtt_port[6] = MQTT_SERVERPORT;
 int mqtt_publish_interval = MQTT_PUBLISH_INTERVAL;
 unsigned long lightOnTimeout = 60000; //60 seconds
+unsigned long switchOffAlertTime = 5000; //5 seconds
 
-// Vars for storing humidity and temperature
-float humidity, temperature, heatIndex, humidityThreshold = HUMIDITY_THRESHOLD;
-float latest_humidity = 0, latest_temperature = 0, latest_heatIndex = 0;
-float startedOn = 0; // time the fan started
 unsigned long lastread = 0, lastpublish = 0; // time of last read
-bool errorReadingMeasures = false;
-
-float minimumRunningTime = 1000 * 60 * 3; // 3 minutes
 
 //Create the webserver
 ESP8266WebServer server(80);
@@ -223,12 +215,11 @@ void setup() {
 
   //CONNECT pin to buttons, and buttons to GND
   pinMode(INPUTPIN, INPUT_PULLUP);
+  pinMode(LEDPIN, OUTPUT);
       
   // Start with opened relay
     pinMode(RELAYPIN, OUTPUT);
-    digitalWrite(RELAYPIN, HIGH);
-    publishRelayState(false);
-    relayOn = false;
+    switchOff();
 
   // OTA
   ota_init(module_name);
@@ -277,6 +268,7 @@ void loop() {
 
 void switchOn(){
       digitalWrite(RELAYPIN, LOW);
+      digitalWrite(LEDPIN, HIGH);
       if(!relayOn){
             publishRelayState(true);
             relayOn = true;
@@ -286,6 +278,7 @@ void switchOn(){
 
 void switchOff(){
       digitalWrite(RELAYPIN, HIGH);
+      digitalWrite(LEDPIN, LOW);
       publishRelayState(false);
       relayOn = false;
 }
