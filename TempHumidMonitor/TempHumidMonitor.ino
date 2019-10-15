@@ -90,7 +90,7 @@ Board : esp8286 by ESP8286 Community. Version 2.5.0
 #define RELAYPIN            D4 
 #define DHTTYPE             DHT22 
 #define HUMIDITY_THRESHOLD  70 
-#define READ_INTERVAL       1000 // ms
+#define READ_INTERVAL       3000 // ms
 
 /*********************/
 /*     Global vars   */
