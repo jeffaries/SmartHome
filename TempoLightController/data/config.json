@@ -1,0 +1,1 @@
+{"module_name":"bathroom","mqtt_prefix":"smarthome","mqtt_server":"broker.mqttdashboard.com","mqtt_port":"1883","mqtt_publish_interval":60,"humidity_threshold":55}
