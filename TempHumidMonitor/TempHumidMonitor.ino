@@ -90,7 +90,7 @@ Board : esp8286 by ESP8286 Community. Version 2.5.0
 #define RELAYPIN            D4 
 #define DHTTYPE             DHT22 
 #define HUMIDITY_THRESHOLD  70 
-#define READ_INTERVAL       1000 // ms
+int READ_INTERVAL=1000; // ms
 
 /*********************/
 /*     Global vars   */
@@ -224,7 +224,7 @@ void setup() {
 
 
   dht.setup(DHTPIN, DHTesp::DHT22);
-  
+  READ_INTERVAL = dht.getMinimumSamplingPeriod();
   
   Serial.print("IP number assigned by DHCP is ");
   Serial.println(WiFi.localIP());
@@ -292,6 +292,7 @@ void loop() {
     }
   }
 
+  delay(100);
 }
 
 void read()
